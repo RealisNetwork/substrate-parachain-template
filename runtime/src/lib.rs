@@ -30,9 +30,7 @@ use sp_version::RuntimeVersion;
 
 use frame_support::{
 	construct_runtime, parameter_types,
-	traits::{
-		AsEnsureOriginWithArg, ConstU128, Everything,
-	},
+	traits::{AsEnsureOriginWithArg, ConstU128, Everything},
 	weights::{
 		constants::WEIGHT_PER_SECOND, ConstantMultiplier, DispatchClass, Weight,
 		WeightToFeeCoefficient, WeightToFeeCoefficients, WeightToFeePolynomial,
@@ -517,8 +515,6 @@ impl pallet_nft::Config for Runtime {
 	type Helper = ();
 	type CreateOrigin = AsEnsureOriginWithArg<EnsureSigned<AccountId>>;
 }
-
-
 
 // Create the runtime by composing the FRAME pallets that were previously configured.
 construct_runtime!(

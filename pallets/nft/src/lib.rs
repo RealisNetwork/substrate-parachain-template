@@ -134,7 +134,7 @@ pub mod pallet {
 	#[pallet::storage]
 	/// The class, if any, of which an account is willing to take ownership.
 	pub(super) type OwnershipAcceptance<T: Config<I>, I: 'static = ()> =
-	StorageMap<_, Blake2_128Concat, T::AccountId, T::ClassId>;
+		StorageMap<_, Blake2_128Concat, T::AccountId, T::ClassId>;
 
 	#[pallet::storage]
 	/// The assets held by any given account; set out this way so that assets owned by a single
@@ -448,7 +448,7 @@ pub mod pallet {
 				details.instance_metadatas,
 				details.attributes,
 			))
-				.into())
+			.into())
 		}
 
 		/// Mint an asset instance of a particular class.
@@ -592,10 +592,10 @@ pub mod pallet {
 					if T::Currency::reserve(&class_details.owner, deposit - old).is_err() {
 						// NOTE: No alterations made to class_details in this iteration so far, so
 						// this is OK to do.
-						continue
+						continue;
 					}
 				} else {
-					continue
+					continue;
 				}
 				class_details.total_deposit.saturating_accrue(deposit);
 				class_details.total_deposit.saturating_reduce(old);
@@ -748,7 +748,7 @@ pub mod pallet {
 				let details = maybe_details.as_mut().ok_or(Error::<T, I>::UnknownClass)?;
 				ensure!(&origin == &details.owner, Error::<T, I>::NoPermission);
 				if details.owner == owner {
-					return Ok(())
+					return Ok(());
 				}
 
 				// Move the deposit to the new owner.
@@ -989,8 +989,9 @@ pub mod pallet {
 			}
 			let maybe_is_frozen = match maybe_instance {
 				None => ClassMetadataOf::<T, I>::get(class).map(|v| v.is_frozen),
-				Some(instance) =>
-					InstanceMetadataOf::<T, I>::get(class, instance).map(|v| v.is_frozen),
+				Some(instance) => {
+					InstanceMetadataOf::<T, I>::get(class, instance).map(|v| v.is_frozen)
+				},
 			};
 			ensure!(!maybe_is_frozen.unwrap_or(false), Error::<T, I>::Frozen);
 
@@ -1051,8 +1052,9 @@ pub mod pallet {
 			}
 			let maybe_is_frozen = match maybe_instance {
 				None => ClassMetadataOf::<T, I>::get(class).map(|v| v.is_frozen),
-				Some(instance) =>
-					InstanceMetadataOf::<T, I>::get(class, instance).map(|v| v.is_frozen),
+				Some(instance) => {
+					InstanceMetadataOf::<T, I>::get(class, instance).map(|v| v.is_frozen)
+				},
 			};
 			ensure!(!maybe_is_frozen.unwrap_or(false), Error::<T, I>::Frozen);
 

@@ -2,12 +2,12 @@
 
 use super::*;
 use frame_benchmarking::{
-    account, benchmarks_instance_pallet, whitelist_account, whitelisted_caller,
+	account, benchmarks_instance_pallet, whitelist_account, whitelisted_caller,
 };
 use frame_support::{
-    dispatch::UnfilteredDispatchable,
-    traits::{EnsureOrigin, Get},
-    BoundedVec,
+	dispatch::UnfilteredDispatchable,
+	traits::{EnsureOrigin, Get},
+	BoundedVec,
 };
 use frame_system::RawOrigin as SystemOrigin;
 use sp_runtime::traits::Bounded;
@@ -17,101 +17,103 @@ use crate::Pallet as Uniques;
 
 const SEED: u32 = 0;
 
-fn create_class<T: Config<I>, I: 'static>() -> (T::ClassId, T::AccountId, <T::Lookup as StaticLookup>::Source) {
-    let caller: T::AccountId = whitelisted_caller();
-    let caller_lookup = T::Lookup::unlookup(caller.clone());
-    let class = T::Helper::class(0);
-    T::Currency::make_free_balance_be(&caller, DepositBalanceOf::<T, I>::max_value());
-    assert!(Uniques::<T, I>::force_create(
-        SystemOrigin::Root.into(),
-        class,
-        caller_lookup.clone(),
-        false,
-    )
-        .is_ok());
-    (class, caller, caller_lookup)
+fn create_class<T: Config<I>, I: 'static>(
+) -> (T::ClassId, T::AccountId, <T::Lookup as StaticLookup>::Source) {
+	let caller: T::AccountId = whitelisted_caller();
+	let caller_lookup = T::Lookup::unlookup(caller.clone());
+	let class = T::Helper::class(0);
+	T::Currency::make_free_balance_be(&caller, DepositBalanceOf::<T, I>::max_value());
+	assert!(Uniques::<T, I>::force_create(
+		SystemOrigin::Root.into(),
+		class,
+		caller_lookup.clone(),
+		false,
+	)
+	.is_ok());
+	(class, caller, caller_lookup)
 }
 
-fn add_class_metadata<T: Config<I>, I: 'static>() -> (T::AccountId, <T::Lookup as StaticLookup>::Source) {
-    let caller = Class::<T, I>::get(T::Helper::class(0)).unwrap().owner;
-    if caller != whitelisted_caller() {
-        whitelist_account!(caller);
-    }
-    let caller_lookup = T::Lookup::unlookup(caller.clone());
-    assert!(Uniques::<T, I>::set_class_metadata(
-        SystemOrigin::Signed(caller.clone()).into(),
-        T::Helper::class(0),
-        vec![0; T::StringLimit::get() as usize].try_into().unwrap(),
-        false,
-    )
-        .is_ok());
-    (caller, caller_lookup)
+fn add_class_metadata<T: Config<I>, I: 'static>(
+) -> (T::AccountId, <T::Lookup as StaticLookup>::Source) {
+	let caller = Class::<T, I>::get(T::Helper::class(0)).unwrap().owner;
+	if caller != whitelisted_caller() {
+		whitelist_account!(caller);
+	}
+	let caller_lookup = T::Lookup::unlookup(caller.clone());
+	assert!(Uniques::<T, I>::set_class_metadata(
+		SystemOrigin::Signed(caller.clone()).into(),
+		T::Helper::class(0),
+		vec![0; T::StringLimit::get() as usize].try_into().unwrap(),
+		false,
+	)
+	.is_ok());
+	(caller, caller_lookup)
 }
 
 fn mint_instance<T: Config<I>, I: 'static>(
-    index: u16,
+	index: u16,
 ) -> (T::InstanceId, T::AccountId, <T::Lookup as StaticLookup>::Source) {
-    let caller = Class::<T, I>::get(T::Helper::class(0)).unwrap().admin;
-    if caller != whitelisted_caller() {
-        whitelist_account!(caller);
-    }
-    let caller_lookup = T::Lookup::unlookup(caller.clone());
-    let instance = T::Helper::instance(index);
-    assert!(Uniques::<T, I>::mint(
-        SystemOrigin::Signed(caller.clone()).into(),
-        T::Helper::class(0),
-        instance,
-        caller_lookup.clone(),
-    )
-        .is_ok());
-    (instance, caller, caller_lookup)
+	let caller = Class::<T, I>::get(T::Helper::class(0)).unwrap().admin;
+	if caller != whitelisted_caller() {
+		whitelist_account!(caller);
+	}
+	let caller_lookup = T::Lookup::unlookup(caller.clone());
+	let instance = T::Helper::instance(index);
+	assert!(Uniques::<T, I>::mint(
+		SystemOrigin::Signed(caller.clone()).into(),
+		T::Helper::class(0),
+		instance,
+		caller_lookup.clone(),
+	)
+	.is_ok());
+	(instance, caller, caller_lookup)
 }
 
 fn add_instance_metadata<T: Config<I>, I: 'static>(
-    instance: T::InstanceId,
+	instance: T::InstanceId,
 ) -> (T::AccountId, <T::Lookup as StaticLookup>::Source) {
-    let caller = Class::<T, I>::get(T::Helper::class(0)).unwrap().owner;
-    if caller != whitelisted_caller() {
-        whitelist_account!(caller);
-    }
-    let caller_lookup = T::Lookup::unlookup(caller.clone());
-    assert!(Uniques::<T, I>::set_metadata(
-        SystemOrigin::Signed(caller.clone()).into(),
-        T::Helper::class(0),
-        instance,
-        vec![0; T::StringLimit::get() as usize].try_into().unwrap(),
-        false,
-    )
-        .is_ok());
-    (caller, caller_lookup)
+	let caller = Class::<T, I>::get(T::Helper::class(0)).unwrap().owner;
+	if caller != whitelisted_caller() {
+		whitelist_account!(caller);
+	}
+	let caller_lookup = T::Lookup::unlookup(caller.clone());
+	assert!(Uniques::<T, I>::set_metadata(
+		SystemOrigin::Signed(caller.clone()).into(),
+		T::Helper::class(0),
+		instance,
+		vec![0; T::StringLimit::get() as usize].try_into().unwrap(),
+		false,
+	)
+	.is_ok());
+	(caller, caller_lookup)
 }
 
 fn add_instance_attribute<T: Config<I>, I: 'static>(
-    instance: T::InstanceId,
+	instance: T::InstanceId,
 ) -> (BoundedVec<u8, T::KeyLimit>, T::AccountId, <T::Lookup as StaticLookup>::Source) {
-    let caller = Class::<T, I>::get(T::Helper::class(0)).unwrap().owner;
-    if caller != whitelisted_caller() {
-        whitelist_account!(caller);
-    }
-    let caller_lookup = T::Lookup::unlookup(caller.clone());
-    let key: BoundedVec<_, _> = vec![0; T::KeyLimit::get() as usize].try_into().unwrap();
-    assert!(Uniques::<T, I>::set_attribute(
-        SystemOrigin::Signed(caller.clone()).into(),
-        T::Helper::class(0),
-        Some(instance),
-        key.clone(),
-        vec![0; T::ValueLimit::get() as usize].try_into().unwrap(),
-    )
-        .is_ok());
-    (key, caller, caller_lookup)
+	let caller = Class::<T, I>::get(T::Helper::class(0)).unwrap().owner;
+	if caller != whitelisted_caller() {
+		whitelist_account!(caller);
+	}
+	let caller_lookup = T::Lookup::unlookup(caller.clone());
+	let key: BoundedVec<_, _> = vec![0; T::KeyLimit::get() as usize].try_into().unwrap();
+	assert!(Uniques::<T, I>::set_attribute(
+		SystemOrigin::Signed(caller.clone()).into(),
+		T::Helper::class(0),
+		Some(instance),
+		key.clone(),
+		vec![0; T::ValueLimit::get() as usize].try_into().unwrap(),
+	)
+	.is_ok());
+	(key, caller, caller_lookup)
 }
 
 fn assert_last_event<T: Config<I>, I: 'static>(generic_event: <T as Config<I>>::Event) {
-    let events = frame_system::Pallet::<T>::events();
-    let system_event: <T as frame_system::Config>::Event = generic_event.into();
-    // compare to the last event record
-    let frame_system::EventRecord { event, .. } = &events[events.len() - 1];
-    assert_eq!(event, &system_event);
+	let events = frame_system::Pallet::<T>::events();
+	let system_event: <T as frame_system::Config>::Event = generic_event.into();
+	// compare to the last event record
+	let frame_system::EventRecord { event, .. } = &events[events.len() - 1];
+	assert_eq!(event, &system_event);
 }
 
 benchmarks_instance_pallet! {
