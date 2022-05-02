@@ -9,6 +9,10 @@ include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
 mod weights;
 pub mod xcm_config;
 
+/// Constant values used within the runtime.
+pub mod constants;
+use constants::currency::*;
+
 use smallvec::smallvec;
 use sp_api::impl_runtime_apis;
 use sp_core::{crypto::KeyTypeId, OpaqueMetadata};
@@ -26,7 +30,7 @@ use sp_version::RuntimeVersion;
 
 use frame_support::{
 	construct_runtime, parameter_types,
-	traits::Everything,
+	traits::{AsEnsureOriginWithArg, ConstU128, Everything},
 	weights::{
 		constants::WEIGHT_PER_SECOND, ConstantMultiplier, DispatchClass, Weight,
 		WeightToFeeCoefficient, WeightToFeeCoefficients, WeightToFeePolynomial,
@@ -35,7 +39,7 @@ use frame_support::{
 };
 use frame_system::{
 	limits::{BlockLength, BlockWeights},
-	EnsureRoot,
+	EnsureRoot, EnsureSigned,
 };
 pub use sp_consensus_aura::sr25519::AuthorityId as AuraId;
 pub use sp_runtime::{MultiAddress, Perbill, Permill};
@@ -55,6 +59,9 @@ use xcm_executor::XcmExecutor;
 
 /// Import the template pallet.
 pub use pallet_template;
+
+/// Import the nft pallet
+pub use pallet_nft;
 
 /// Alias to 512-bit hash when used in the context of a transaction signature on the chain.
 pub type Signature = MultiSignature;
@@ -456,6 +463,66 @@ impl pallet_template::Config for Runtime {
 	type Event = Event;
 }
 
+parameter_types! {
+	pub const AssetDeposit: Balance = 100 * DOLLARS;
+	pub const ApprovalDeposit: Balance = 1 * DOLLARS;
+	pub const StringLimit: u32 = 50;
+	pub const MetadataDepositBase: Balance = 10 * DOLLARS;
+	pub const MetadataDepositPerByte: Balance = 1 * DOLLARS;
+}
+
+impl pallet_assets::Config for Runtime {
+	type Event = Event;
+	type Balance = u128;
+	type AssetId = u32;
+	type Currency = Balances;
+	type ForceOrigin = EnsureRoot<AccountId>;
+	type AssetDeposit = AssetDeposit;
+	type AssetAccountDeposit = ConstU128<DOLLARS>;
+	type MetadataDepositBase = MetadataDepositBase;
+	type MetadataDepositPerByte = MetadataDepositPerByte;
+	type ApprovalDeposit = ApprovalDeposit;
+	type StringLimit = StringLimit;
+	type Freezer = ();
+	type Extra = ();
+	type WeightInfo = pallet_assets::weights::SubstrateWeight<Runtime>;
+}
+
+parameter_types! {
+	pub const ClassDeposit: Balance = 100 * DOLLARS;
+	pub const InstanceDeposit: Balance = 1 * DOLLARS;
+	pub const KeyLimit: u32 = 32;
+	pub const ValueLimit: u32 = 256;
+}
+
+/// Configure the pallet nft in pallets/nft.
+impl pallet_nft::Config for Runtime {
+	type Event = Event;
+	type ClassId = u32;
+	type InstanceId = u32; // TODO U256
+	type Currency = Balances;
+	type ForceOrigin = frame_system::EnsureRoot<AccountId>;
+	type ClassDeposit = ClassDeposit;
+	type InstanceDeposit = InstanceDeposit;
+	type MetadataDepositBase = MetadataDepositBase;
+	type AttributeDepositBase = MetadataDepositBase;
+	type DepositPerByte = MetadataDepositPerByte;
+	type StringLimit = StringLimit;
+	type KeyLimit = KeyLimit;
+	type ValueLimit = ValueLimit;
+	type WeightInfo = pallet_nft::weights::SubstrateWeight<Runtime>;
+	#[cfg(feature = "runtime-benchmarks")]
+	type Helper = ();
+	type CreateOrigin = AsEnsureOriginWithArg<EnsureSigned<AccountId>>;
+}
+
+impl pallet_utility::Config for Runtime {
+	type Event = Event;
+	type Call = Call;
+	type PalletsOrigin = OriginCaller;
+	type WeightInfo = ();
+}
+
 // Create the runtime by composing the FRAME pallets that were previously configured.
 construct_runtime!(
 	pub enum Runtime where
@@ -490,6 +557,11 @@ construct_runtime!(
 
 		// Template
 		TemplatePallet: pallet_template::{Pallet, Call, Storage, Event<T>}  = 40,
+
+		// NFT
+		NftPallet: pallet_nft::{Pallet, Call, Storage, Event<T>} = 50,
+		Assets: pallet_assets::{Pallet, Call, Storage, Event<T>} = 51,
+		Utility: pallet_utility::{Pallet, Call, Event} = 52,
 	}
 );
 

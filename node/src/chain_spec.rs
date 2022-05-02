@@ -211,6 +211,7 @@ fn testnet_genesis(
 		},
 		// no need to pass anything to aura, in fact it will panic if we do. Session will take care
 		// of this.
+		// assets: Default::default(),
 		aura: Default::default(),
 		aura_ext: Default::default(),
 		parachain_system: Default::default(),
