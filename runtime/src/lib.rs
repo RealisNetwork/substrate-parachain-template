@@ -499,7 +499,7 @@ parameter_types! {
 impl pallet_nft::Config for Runtime {
 	type Event = Event;
 	type ClassId = u32;
-	type InstanceId = u32;
+	type InstanceId = u32; // TODO U256
 	type Currency = Balances;
 	type ForceOrigin = frame_system::EnsureRoot<AccountId>;
 	type ClassDeposit = ClassDeposit;
@@ -514,6 +514,13 @@ impl pallet_nft::Config for Runtime {
 	#[cfg(feature = "runtime-benchmarks")]
 	type Helper = ();
 	type CreateOrigin = AsEnsureOriginWithArg<EnsureSigned<AccountId>>;
+}
+
+impl pallet_utility::Config for Runtime {
+	type Event = Event;
+	type Call = Call;
+	type PalletsOrigin = OriginCaller;
+	type WeightInfo = ();
 }
 
 // Create the runtime by composing the FRAME pallets that were previously configured.
@@ -554,6 +561,7 @@ construct_runtime!(
 		// NFT
 		NftPallet: pallet_nft::{Pallet, Call, Storage, Event<T>} = 50,
 		Assets: pallet_assets::{Pallet, Call, Storage, Event<T>} = 51,
+		Utility: pallet_utility::{Pallet, Call, Event} = 52,
 	}
 );
 
