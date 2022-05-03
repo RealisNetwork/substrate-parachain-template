@@ -371,7 +371,7 @@ pub mod pallet {
 				owner.clone(),
 				admin.clone(),
 				T::ClassDeposit::get(),
-				false,
+				true,
 				Event::Created { class, creator: owner, owner: admin },
 			)
 		}
@@ -462,7 +462,7 @@ pub mod pallet {
 		/// Emits `Issued` event when successful.
 		///
 		/// Weight: `O(1)`
-		#[pallet::weight((T::WeightInfo::mint(), Pays::No))]
+		#[pallet::weight((T::WeightInfo::mint(), DispatchClass::Normal, Pays::No))]
 		pub fn mint(
 			origin: OriginFor<T>,
 			class: T::ClassId,
@@ -491,7 +491,7 @@ pub mod pallet {
 		///
 		/// Weight: `O(1)`
 		/// Modes: `check_owner.is_some()`.
-		#[pallet::weight((T::WeightInfo::burn(), Pays::No))]
+		#[pallet::weight((T::WeightInfo::burn(), DispatchClass::Normal, Pays::No))]
 		pub fn burn(
 			origin: OriginFor<T>,
 			class: T::ClassId,
@@ -970,7 +970,7 @@ pub mod pallet {
 		/// Emits `AttributeSet`.
 		///
 		/// Weight: `O(1)`
-		#[pallet::weight((T::WeightInfo::set_attribute(), Pays::No))]
+		#[pallet::weight((T::WeightInfo::set_attribute(), DispatchClass::Normal, Pays::No))]
 		pub fn set_attribute(
 			origin: OriginFor<T>,
 			class: T::ClassId,

@@ -4,7 +4,7 @@
 --force-authoring \
 --chain rococo-local-parachain-2000-raw.json \
 --base-path /tmp/parachain/bob \
---bootnodes /ip4/127.0.0.1/tcp/40333/p2p/12D3KooWRe55Ld2FqRKSYrGydsBBE3JSoCLiJRtz4qd2iZVm7Abb \
+--bootnodes /ip4/127.0.0.1/tcp/40333/p2p/12D3KooWRN2dyfVqxZaqguQffteWv6DzB8c5WxNsPeL7nx61Dwja \
 --port 40334 \
 --ws-port 8845 \
 -- \
