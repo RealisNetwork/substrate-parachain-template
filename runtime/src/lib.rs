@@ -45,13 +45,12 @@ pub use sp_consensus_aura::sr25519::AuthorityId as AuraId;
 pub use sp_runtime::{MultiAddress, Perbill, Permill};
 use xcm_config::{XcmConfig, XcmOriginToTransactDispatchOrigin};
 
-pub use primitive_types::U256;
-
 #[cfg(any(feature = "std", test))]
 pub use sp_runtime::BuildStorage;
 
 // Polkadot imports
 use polkadot_runtime_common::{BlockHashCount, SlowAdjustingFeeUpdate};
+use primitive_types::U256;
 
 use weights::{BlockExecutionWeight, ExtrinsicBaseWeight, RocksDbWeight};
 
@@ -64,6 +63,9 @@ pub use pallet_template;
 
 /// Import the nft pallet
 pub use pallet_nft;
+
+// /// Import the rmrk_core pallet
+// pub use pallet_rmrk_core;
 
 /// Alias to 512-bit hash when used in the context of a transaction signature on the chain.
 pub type Signature = MultiSignature;
@@ -194,7 +196,7 @@ pub const VERSION: RuntimeVersion = RuntimeVersion {
 /// up by `pallet_aura` to implement `fn slot_duration()`.
 ///
 /// Change this to adjust the block time.
-pub const MILLISECS_PER_BLOCK: u64 = 6000;
+pub const MILLISECS_PER_BLOCK: u64 = 12000;
 
 // NOTE: Currently it is not possible to change the slot duration after the chain has started.
 //       Attempting to do so will brick block production.
@@ -518,6 +520,24 @@ impl pallet_nft::Config for Runtime {
 	type CreateOrigin = AsEnsureOriginWithArg<EnsureSigned<AccountId>>;
 }
 
+// parameter_types! {
+// 	pub const MaxRecursions: u32 = 10;
+// 	pub const ResourceSymbolLimit: u32 = 10;
+// 	pub const PartsLimit: u32 = 3;
+// 	pub const MaxPriorities: u32 = 3;
+// 	pub const CollectionSymbolLimit: u32 = 100;
+// }
+//
+// impl pallet_rmrk_core::Config for Runtime {
+// 	type Event = Event;
+// 	type ProtocolOrigin = frame_system::EnsureRoot<AccountId>;
+// 	type MaxRecursions = MaxRecursions;
+// 	type ResourceSymbolLimit = ResourceSymbolLimit;
+// 	type PartsLimit = PartsLimit;
+// 	type MaxPriorities = MaxPriorities;
+// 	type CollectionSymbolLimit = CollectionSymbolLimit;
+// }
+
 impl pallet_utility::Config for Runtime {
 	type Event = Event;
 	type Call = Call;
@@ -564,6 +584,7 @@ construct_runtime!(
 		NftPallet: pallet_nft::{Pallet, Call, Storage, Event<T>} = 50,
 		Assets: pallet_assets::{Pallet, Call, Storage, Event<T>} = 51,
 		Utility: pallet_utility::{Pallet, Call, Event} = 52,
+		// RmrkCore: pallet_rmrk_core::{Pallet, Call, Event<T>, Storage} = 53,
 	}
 );
 
