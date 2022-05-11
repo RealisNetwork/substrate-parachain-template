@@ -62,9 +62,9 @@ substrate-prometheus-endpoint = { git = "https://github.com/paritytech/substrate
 try-runtime-cli = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.19" }
 
 # Polkadot
-polkadot-cli = { git = "https://github.com/paritytech/polkadot", branch = "release-v0.9.19" }
+polkadot-cli = { git = "https://github.com/RealisNetwork/polkadot", branch = "realis" }
 polkadot-parachain = { git = "https://github.com/paritytech/polkadot", branch = "release-v0.9.19" }
-polkadot-primitives = { git = "https://github.com/paritytech/polkadot", branch = "release-v0.9.19" }
+polkadot-primitives = { git = "https://github.com/RealisNetwork/polkadot", branch = "realis" }
 polkadot-service = { git = "https://github.com/paritytech/polkadot", branch = "release-v0.9.19" }
 xcm = { git = "https://github.com/paritytech/polkadot", default-features = false, branch = "release-v0.9.19" }
 

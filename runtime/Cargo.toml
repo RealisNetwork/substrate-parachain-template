@@ -26,7 +26,6 @@ primitive-types = { version = "0.11.1", default-features = false }
 # Local
 pallet-template = { path = "../pallets/template", default-features = false }
 pallet-nft = { path = "../pallets/nft", default-features = false }
-pallet-rmrk-core = { path = "../pallets/rmrk-core", default-features = false }
 
 # Substrate
 frame-benchmarking = { git = "https://github.com/paritytech/substrate", default-features = false, optional = true, branch = "polkadot-v0.9.19" }
@@ -64,8 +63,8 @@ node-primitives = { version = "2.0.0", git = "https://github.com/paritytech/subs
 
 # Polkadot
 pallet-xcm = { git = "https://github.com/paritytech/polkadot", default-features = false, branch = "release-v0.9.19" }
-polkadot-parachain = { git = "https://github.com/paritytech/polkadot", default-features = false, branch = "release-v0.9.19" }
-polkadot-runtime-common = { git = "https://github.com/paritytech/polkadot", default-features = false, branch = "release-v0.9.19" }
+polkadot-parachain = { git = "https://github.com/RealisNetwork/polkadot", default-features = false, branch = "realis" }
+polkadot-runtime-common = { git = "https://github.com/RealisNetwork/polkadot", default-features = false, branch = "realis" }
 xcm = { git = "https://github.com/paritytech/polkadot", default-features = false, branch = "release-v0.9.19" }
 xcm-builder = { git = "https://github.com/paritytech/polkadot", default-features = false, branch = "release-v0.9.19" }
 xcm-executor = { git = "https://github.com/paritytech/polkadot", default-features = false, branch = "release-v0.9.19" }
