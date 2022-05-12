@@ -8,6 +8,6 @@
 --ws-port 8844 \
 -- \
 --execution wasm \
---chain /home/user/CLionProjects/polkadot/res/realis-testnet-raw.json \
+--chain res/relay-chain/realis-testnet-raw.json \
 --port 30343 \
 --ws-port 9977
